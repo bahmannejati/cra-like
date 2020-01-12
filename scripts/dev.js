@@ -61,7 +61,6 @@ const devServer = new webpackDevServer(compiler, {
     // contentBase is used for correct serving
     // static files during dev server, because we dont
     // copy static files in public folder during dev
-    // contentBase: 'public/',
     contentBase: 'public/',
 
     // public path is just like output.publicPath

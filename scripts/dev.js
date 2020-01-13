@@ -56,7 +56,7 @@ const devServer = new webpackDevServer(compiler, {
         colors: true,
     },
     writeToDisk: true,
-    quiet: true,
+    quiet: false,
 
     // contentBase is used for correct serving
     // static files during dev server, because we dont

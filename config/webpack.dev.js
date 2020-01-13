@@ -11,6 +11,7 @@ module.exports = {
         main: path.resolve(__dirname, '../src/index.js'),
     },
     resolve: {
+        extensions: ['*', '.js', '.jsx'],
         modules: ['node_modules', 'src/'],
         alias: {
             'aqios': 'axios',
@@ -28,6 +29,30 @@ module.exports = {
     // externals: {
     //     _: 'lodash',
     // },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                // exclude: /node_modules/,
+                include: path.resolve(__dirname, '../src'),
+                loader: 'babel-loader',
+                options: {
+                    cacheDirectory: true,
+                    cacheCompression: false,
+                }
+            },
+            {
+                enforce: 'pre',
+                test: /\.js$/,
+                exclude: /node_modules/,
+                include: path.resolve(__dirname, '../src'),
+                loader: 'eslint-loader',
+                options: {
+                    cache: true,
+                }
+            }
+        ]
+    },
     plugins: [
         new HtmlWebpackPlugin({
             inject: true,

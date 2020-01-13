@@ -1,5 +1,19 @@
-console.log("HEADER!!!")
+import React from 'react'
 
 
-module.exports = {
+const Header = () => {
+    return (
+        <header>
+            <ul>
+                <li>
+                    nav 1
+                </li>
+                <li>
+                    nav 2
+                </li>
+            </ul>
+        </header>
+    )   
 }
+
+export default Header

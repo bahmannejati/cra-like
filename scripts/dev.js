@@ -5,9 +5,18 @@ const detect = require("detect-port");
 const webpackDevServer = require('webpack-dev-server');
 const inquirer = require("inquirer");
 const chalk = require("chalk");
+const webpackDevConfig = require('../config/webpack.dev');
+
 
 
 const defaultPort = 4000;
+
+function clearConsole() {
+    process.stdout.write(
+        process.platform === 'win32' ? '\x1B[2J\x1B[0f' : '\x1B[2J\x1B[3J\x1B[H'
+    );
+}
+  
 
 
 
@@ -27,7 +36,7 @@ var dotEnvsWithPriority = [
 
 dotEnvsWithPriority.forEach((filePath) => {
     if(!fs.existsSync(filePath)) {
-        console.log("NOT FOUND: ", filePath)
+        // console.log("NOT FOUND: ", filePath)
         return
     }
     require("dotenv-expand")(
@@ -40,16 +49,78 @@ dotEnvsWithPriority.forEach((filePath) => {
 
 
 
-console.log("ENV PATH: ", process.env.TEST_VAR)
+// console.log("ENV PATH: ", process.env.TEST_VAR)
 
 
 
 
-const webpackDevConfig = require('../config/webpack.dev');
 
-
+// --- compiler
 const compiler = webpack(webpackDevConfig)
+
+
+
+
+
+// --- extract stats
 let statCounter = 0
+
+compiler.hooks.done.tap('extractStats', (stats) => {
+    let statsJSON = stats.toJson()
+
+    if(statCounter > 0 || (statsJSON.errors && statsJSON.errors.length)){
+        return
+    }
+    statCounter ++
+    
+    fs.writeFile(path.resolve(__dirname, "../dev/stats.json"), JSON.stringify(), 'utf8', (error) => {
+        if (error) throw error;
+        console.log()
+        console.log('[stats.json file has been saved]')
+        console.log()
+    })
+    return true
+})
+
+
+compiler.hooks.invalid.tap('onInvalid', (stats) => {
+    clearConsole()
+    console.log("Now is compiling...")
+})
+
+compiler.hooks.done.tap('printAfterCompile', (stats) => {
+    clearConsole()
+
+    let statsJSON = stats.toJson()
+
+    if(statsJSON.errors && statsJSON.errors.length) {
+        console.log(chalk.red(`xxx Compile error xxx`))
+        console.log()
+        console.log(chalk.red(statsJSON.errors[0]))
+        console.log()
+        return false
+    }
+    if(statsJSON.warnings && statsJSON.warnings.length) {
+        console.log(chalk.yellow(`Compiled with Warning`))
+        console.log()
+        statsJSON.warnings.forEach(warningString => {
+            console.log(chalk.yellow(warningString))
+            console.log()
+        })
+    }
+    else {
+        console.log(chalk.green(`Compiled successfully`))
+        console.log()
+    }
+
+
+    return true
+})
+
+
+
+
+
 
 const devServer = new webpackDevServer(compiler, {
     open: false,
@@ -57,23 +128,9 @@ const devServer = new webpackDevServer(compiler, {
         colors: true,
     },
     writeToDisk: true,
-    quiet: false,
+    quiet: true,
     progress: true,
     stats: 'normal',
-    after: (app, server, compiler) => {
-        compiler.hooks.done.tap('extractStats', (stats) => {
-            if(statCounter > 0) return;
-            statCounter ++
-            
-            fs.writeFile(path.resolve(__dirname, "../dev/stats.json"), JSON.stringify(stats.toJson()), 'utf8', (error) => {
-                if (error) throw error;
-                console.log()
-                console.log('stats.json file has been saved')
-                console.log()
-            })
-            return true
-        })
-    },
 
 
     // contentBase is used for correct serving

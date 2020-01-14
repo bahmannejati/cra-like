@@ -49,6 +49,7 @@ const webpackDevConfig = require('../config/webpack.dev');
 
 
 const compiler = webpack(webpackDevConfig)
+let statCounter = 0
 
 const devServer = new webpackDevServer(compiler, {
     open: false,
@@ -57,6 +58,23 @@ const devServer = new webpackDevServer(compiler, {
     },
     writeToDisk: true,
     quiet: false,
+    progress: true,
+    stats: 'normal',
+    after: (app, server, compiler) => {
+        compiler.hooks.done.tap('extractStats', (stats) => {
+            if(statCounter > 0) return;
+            statCounter ++
+            
+            fs.writeFile(path.resolve(__dirname, "../dev/stats.json"), JSON.stringify(stats.toJson()), 'utf8', (error) => {
+                if (error) throw error;
+                console.log()
+                console.log('stats.json file has been saved')
+                console.log()
+            })
+            return true
+        })
+    },
+
 
     // contentBase is used for correct serving
     // static files during dev server, because we dont

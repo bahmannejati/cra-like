@@ -13,7 +13,7 @@ const Header = () => {
                     nav 2
                 </li>
             </ul>
-            <img src={svgIMG} alt= "HELLO"/>
+            <img src={svgIMG} alt="HELLO" width={40} />
         </header>
     )   
 }

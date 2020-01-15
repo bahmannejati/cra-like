@@ -10,6 +10,7 @@ const webpackDevConfig = require('../config/webpack.dev');
 
 
 const defaultPort = 4000;
+let beforeCompileStart = null
 
 function clearConsole() {
     process.stdout.write(
@@ -61,6 +62,14 @@ const compiler = webpack(webpackDevConfig)
 
 
 
+// --- before compile
+compiler.hooks.beforeCompile.tapAsync('beforeCompile', (params, callback) => {
+    beforeCompileStart = +(new Date())
+    callback();
+});
+
+
+
 
 // --- extract stats
 let statCounter = 0
@@ -92,6 +101,8 @@ compiler.hooks.done.tap('printAfterCompile', (stats) => {
     clearConsole()
 
     let statsJSON = stats.toJson()
+
+    console.log(chalk.blue(`Duration: ${(+new Date() - beforeCompileStart) / 1000}s`))
 
     if(statsJSON.errors && statsJSON.errors.length) {
         console.log(chalk.red(`xxx Compile error xxx`))

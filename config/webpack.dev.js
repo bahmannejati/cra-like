@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const threadLoader = require('thread-loader');
 
 
 
@@ -56,11 +57,17 @@ module.exports = {
                         test: /\.js$/,
                         exclude: /node_modules/,
                         include: path.resolve(__dirname, '../src'),
-                        loader: 'babel-loader',
-                        options: {
-                            cacheDirectory: true,
-                            cacheCompression: false,
-                        }
+                        use: [
+                            require.resolve("cache-loader"),
+                            require.resolve("thread-loader"),
+                            {
+                                loader: "babel-loader",
+                                options: {
+                                    cacheDirectory: true,
+                                    cacheCompression: false,
+                                }
+                            }
+                        ],
                     },
                     {
                         test: /\.css$/,

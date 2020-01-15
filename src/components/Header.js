@@ -1,5 +1,6 @@
 import React from 'react'
 
+import svgIMG from "./quit.svg"
 
 const Header = () => {
     return (
@@ -12,6 +13,7 @@ const Header = () => {
                     nav 2
                 </li>
             </ul>
+            <img src={svgIMG} alt= "HELLO"/>
         </header>
     )   
 }

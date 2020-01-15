@@ -73,7 +73,7 @@ compiler.hooks.done.tap('extractStats', (stats) => {
     }
     statCounter ++
     
-    fs.writeFile(path.resolve(__dirname, "../dev/stats.json"), JSON.stringify(), 'utf8', (error) => {
+    fs.writeFile(path.resolve(__dirname, "../dev/stats.json"), JSON.stringify(statsJSON), 'utf8', (error) => {
         if (error) throw error;
         console.log()
         console.log('[stats.json file has been saved]')

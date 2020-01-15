@@ -1,0 +1,7 @@
+@import url("./another.css");
+
+body{
+    background-color: #f66;
+    background-image: url('./mini.png');
+    background-image: url('./pattern.jpg');
+}

@@ -11,6 +11,7 @@ module.exports = {
     mode: "development",
     entry: {
         main: path.resolve(__dirname, '../src/index.js'),
+        vendors: ["react", "react-dom"],
     },
     resolve: {
         extensions: ['*', '.js', '.jsx'],
@@ -22,7 +23,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, '../dev'),
-        filename: 'bundle.js',
+        filename: 'static/js/[name].[contenthash:8].js',
 
         // publicPath is used for url of the chunks, also used when a
         // loader inject url of file into html or css
@@ -105,8 +106,8 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            // filename: '[name].css',
-            // chunkFilename: '[id].css',
+            filename: 'static/css/[name].[contenthash:8].css',
+            chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
         new HtmlWebpackPlugin({
             inject: true,
@@ -124,5 +125,14 @@ module.exports = {
                 mode: 'development',
             }),
         })
-    ]
+    ],
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+            name: true
+        },
+        runtimeChunk: {
+            name: entrypoint => `runtime-${entrypoint.name}`,
+        },
+    },
 }

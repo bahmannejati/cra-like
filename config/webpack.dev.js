@@ -10,8 +10,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     mode: "development",
     entry: {
-        main: path.resolve(__dirname, '../src/index.js'),
-        vendors: ["react", "react-dom"],
+        app: path.resolve(__dirname, '../src/index.js'),
+        common: ["react", "react-dom", "antd", "moment"],
+        lodash: ["lodash", "@ant-design/icons/lib"],
     },
     resolve: {
         extensions: ['*', '.js', '.jsx'],

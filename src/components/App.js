@@ -7,10 +7,14 @@ import 'antd/dist/antd.css';
 import 'antd/es/button/style/css';
 
 
+import Hello from './Hello';
+
+
 const App = () => {
     return (
         <div>
             <Header />
+            <Hello />
             <Button>دکمه</Button>
         </div>
     )

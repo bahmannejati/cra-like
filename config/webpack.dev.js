@@ -9,13 +9,14 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     mode: "development",
+    devtool: "source-map",
     entry: {
         app: path.resolve(__dirname, '../src/index.js'),
         common: ["react", "react-dom", "antd", "moment"],
         lodash: ["lodash", "@ant-design/icons/lib"],
     },
     resolve: {
-        extensions: ['*', '.js', '.jsx'],
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
         modules: ['node_modules', 'src/'],
         alias: {
             'aqios': 'axios',
@@ -30,11 +31,23 @@ module.exports = {
         // loader inject url of file into html or css
         publicPath: '/',
     },
+
+
+    // tells webpack don't bundle lodash library
+    // useful when you used <script src="https://raw.githubusercontent.com/lodash/lodash/4.17.15-npm/core.js"></script>
+    // afterward whenever you use `import ___ from "lodash"`
+    // webpack will import global _ as ___
+
     // externals: {
     //     _: 'lodash',
     // },
     module: {
         rules: [
+            {
+                enforce: "pre",
+                test: /\.js$/,
+                loader: "source-map-loader"
+            },
             {
                 enforce: 'pre',
                 test: /\.js$/,
@@ -54,6 +67,15 @@ module.exports = {
                             limit: 10000,
                             name: 'static/media/url-loader/[name].[hash:8].[ext]',
                         }
+                    },
+                    {
+                        test: /\.ts(x?)$/,
+                        exclude: /node_modules/,
+                        use: [
+                            {
+                                loader: 'ts-loader',
+                            }
+                        ]
                     },
                     {
                         test: /\.js$/,

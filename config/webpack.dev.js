@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // const threadLoader = require('thread-loader');
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 
 
 
@@ -147,6 +148,12 @@ module.exports = {
                 test: 'google',
                 mode: 'development',
             }),
+        }),
+        new ForkTsCheckerWebpackPlugin({
+            async: true,// true if is development
+            useTypescriptIncrementalApi: true,
+            checkSyntacticErrors: true,
+            silent: true,
         })
     ],
     optimization: {

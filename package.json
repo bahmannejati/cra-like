@@ -25,6 +25,7 @@
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "file-loader": "^5.0.2",
+    "fork-ts-checker-webpack-plugin": "^4.0.3",
     "html-webpack-plugin": "^3.2.0",
     "lodash": "^4.17.15",
     "mini-css-extract-plugin": "^0.9.0",

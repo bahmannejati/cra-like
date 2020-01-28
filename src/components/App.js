@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 import Header from './Header';
 import './style.css';
@@ -11,11 +11,12 @@ import Hello from './Hello';
 
 
 const App = () => {
+    const [counter, setCouter] = useState(0)
     return (
         <div>
             <Header />
             <Hello />
-            <Button>دکمه</Button>
+            <Button onClick={() => {setCouter(counter + 1)}}>دکمه {counter}</Button>
         </div>
     )
 }

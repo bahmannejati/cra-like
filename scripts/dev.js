@@ -152,6 +152,8 @@ const devServer = new webpackDevServer(compiler, {
     // public path is just like output.publicPath
     // we leave them same
     publicPath: '/',
+
+    hot: true,
 })
 
 

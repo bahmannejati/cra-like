@@ -11,11 +11,16 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 module.exports = {
     mode: "development",
     devtool: "source-map",
-    entry: {
-        app: path.resolve(__dirname, '../src/index.js'),
-        common: ["react", "react-dom", "antd", "moment"],
-        lodash: ["lodash", "@ant-design/icons/lib"],
-    },
+    entry: [
+        require.resolve('../src/hot-entry.js'),
+        require.resolve('webpack-dev-server/client') + '?/',
+        require.resolve('webpack/hot/dev-server'),
+
+        path.resolve(__dirname, '../src/index.js'),
+
+        // ["react", "react-dom", "antd", "moment"],
+        // ["lodash", "@ant-design/icons/lib"],
+    ],
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
         modules: ['node_modules', 'src/'],
@@ -26,7 +31,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, '../dev'),
-        filename: 'static/js/[name].[contenthash:8].js',
+        filename: 'static/js/[name].[hash:8].js',
 
         // publicPath is used for url of the chunks, also used when a
         // loader inject url of file into html or css
@@ -83,13 +88,18 @@ module.exports = {
                         exclude: /node_modules/,
                         include: path.resolve(__dirname, '../src'),
                         use: [
-                            require.resolve("cache-loader"),
-                            require.resolve("thread-loader"),
+                            path.resolve('./babel-loaders/fast-refresh-loader/index.js'),
+                            // require.resolve("cache-loader"),
+                            // require.resolve("thread-loader"),
                             {
                                 loader: "babel-loader",
                                 options: {
                                     cacheDirectory: true,
                                     cacheCompression: false,
+                                    plugins: [
+                                        require.resolve('react-refresh/babel'),
+                                        require.resolve('@babel/plugin-transform-modules-commonjs'),
+                                    ]
                                 }
                             }
                         ],
@@ -99,9 +109,12 @@ module.exports = {
                         exclude: /node_modules/,
                         include: path.resolve(__dirname, '../src'),
                         use: [
+                            path.resolve('./babel-loaders/fast-refresh-loader/index.js'),
                             {
-                                // loader: require.resolve("style-loader"),
-                                loader: MiniCssExtractPlugin.loader,
+                                loader: require.resolve("style-loader"),
+
+                                // this doesn't work with hot refresh!
+                                // loader: MiniCssExtractPlugin.loader,
                             },
                             {
                                 loader: require.resolve("css-loader"),
@@ -130,8 +143,8 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: 'static/css/[name].[contenthash:8].css',
-            chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+            filename: 'static/css/[name].[hash:8].css',
+            chunkFilename: 'static/css/[name].[hash:8].chunk.css',
         }),
         new HtmlWebpackPlugin({
             inject: true,
@@ -154,7 +167,8 @@ module.exports = {
             useTypescriptIncrementalApi: true,
             checkSyntacticErrors: true,
             silent: true,
-        })
+        }),
+        new webpack.HotModuleReplacementPlugin(),
     ],
     optimization: {
         splitChunks: {
